@@ -1783,7 +1783,7 @@ knitr::kable(vfa_demo, col.names = c(&quot;vfa&quot;, &quot;BDE-209 大气颗粒
 <li>$Z_{spm}, Z_s, Z_{sed}$ 全部依赖 $Z_w$ → <strong>连锁失效</strong></li>
 </ul>
 <p>这不是数值问题，是概念问题。</p>
-<h2>从旧权宜解到平衡多物种容量</h2>
+<h2>从旧权宜解到平衡多形态容量</h2>
 <p>早期教学代码常给阴离子赋一个极小的“等效 H”，让它表现为高水溶、不挥发。下面保留这个<strong>反事实实验</strong>，目的是说明为什么这种做法可能在水相浓度上看不出错误；正式内核已经改为按 pH 显式计算中性态分数，并用中性态逸度作为主变量：$Z_{w,total}=1/(\alpha_0 H_0)$。</p>
 <pre><code class="language-r">grid_H &lt;- 10^seq(-12, -4, by = 2)
 res &lt;- data.frame()
@@ -2343,12 +2343,12 @@ knitr::kable(data.frame(
 </tr>
 <tr>
 <td>可电离（药物、PFOA、部分农药）</td>
-<td>多物种逸度 / pH 依赖分配</td>
-<td>拆物种、算各自的 Z</td>
+<td>多形态逸度 / pH 依赖分配</td>
+<td>拆形态、算各自的 Z</td>
 </tr>
 <tr>
 <td>强界面活性（PFAS）</td>
-<td>多物种 + 界面分配 K_iw</td>
+<td>多形态 + 界面分配 K_iw</td>
 <td>不用 K_OW 推 K_OC</td>
 </tr>
 <tr>
@@ -2463,7 +2463,7 @@ knitr::kable(rbind(
 <ol>
 <li><strong>先问排放，再问模型。</strong> 没有排放估计的全球模拟，输出的是&quot;如果排放是 X 会怎样&quot;，不是预测。新污染物的排放优先从监测反演（第 16 章）。</li>
 <li><strong>尺度由半衰期决定。</strong> τ 小于几年、排放集中在局地 → 流域模型；τ 上千年、排放全球分散 → 才轮到全球模型。第 4 章的 τ 判据在这里直接用。</li>
-<li><strong>可电离就先拆物种。</strong> 中性态分数低于 1%，却还在用单一 Kow 算分配，得到的数是&quot;某个不存在的平均分子&quot;的性质。</li>
+<li><strong>可电离就先拆形态。</strong> 中性态分数低于 1%，却还在用单一 Kow 算分配，得到的数是&quot;某个不存在的平均分子&quot;的性质。</li>
 </ol>
 <h2>收口（可直接背）</h2>
 <blockquote>
@@ -2780,7 +2780,7 @@ cat(&quot;模型正算 :&quot;, round(Cw_model, 1), &quot;ng/L @&quot;, E_basin,
 <td>3</td>
 <td>pKa</td>
 <td>实验测定优先；软件估算只作参考</td>
-<td>物种分数错，分配全错</td>
+<td>形态分数错，分配全错</td>
 </tr>
 <tr>
 <td>4</td>
@@ -5768,7 +5768,7 @@ knitr::kable(out, digits = 3, row.names = FALSE)
 <p>三条一读，三个层次就出来了：</p>
 <ol>
 <li><strong>Pb、Cd、Cu、Zn、Ni、Cr</strong> —— 第一条就断。它们在环境温度下的蒸气压低到没有气相可言，$Z_{\rm air}$ 无定义，$f$ 无意义。它们的全球分布靠大气颗粒（寿命几天到几周，迁移几百到几千公里）+ 河流入海。</li>
-<li><strong>Hg</strong> —— 三条都勉强能写，但第三条断了。Hg 的水-土分配能套 $K_d$，大气输运却由 Br 自由基氧化的<strong>速率</strong>控制，不是由分配<strong>平衡</strong>控制。这决定了它必须拆成三个物种，而且物种之间要写转化项。</li>
+<li><strong>Hg</strong> —— 三条都勉强能写，但第三条断了。Hg 的水-土分配能套 $K_d$，大气输运却由 Br 自由基氧化的<strong>速率</strong>控制，不是由分配<strong>平衡</strong>控制。这决定了它必须拆成三个形态，而且形态之间要写转化项。</li>
 <li><strong>As、Se、Sb</strong> —— 卡在中间。有挥发性形态（AsH₃、${\rm SeO_2}$、$({\rm CH_3})_2{\rm Se}$），但环境中的形态由氧化还原电位控制，比 pH 复杂。这一章不展开，判据留了位置。</li>
 </ol>
 <p><strong>Hg 是唯一真正算得进逸度框架的重金属，但只算进去一半。</strong> 这一半是哪一半，是 21.3 节的全部内容。</p>
@@ -5834,7 +5834,7 @@ knitr::kable(rbind(
 </table>
 <p><strong>看第二行和第三行。</strong> 两行都返回&quot;无 Koa 定义 → 先补参数&quot;，但这两行的性质完全不同：</p>
 <ul>
-<li><strong>Hg(0) 的&quot;无 Koa&quot;是判据的错。</strong> 它有 $H = 600$ Pa·m³/mol，$Z$ 算得出来，$K_{aw}$ 也算得出来（$-0.6$）。它缺的不是参数，是&quot;一个物种不能代表汞&quot;这件事——判据根本没有这一格，只能退回到&quot;缺参数&quot;。</li>
+<li><strong>Hg(0) 的&quot;无 Koa&quot;是判据的错。</strong> 它有 $H = 600$ Pa·m³/mol，$Z$ 算得出来，$K_{aw}$ 也算得出来（$-0.6$）。它缺的不是参数，是&quot;一个形态不能代表汞&quot;这件事——判据根本没有这一格，只能退回到&quot;缺参数&quot;。</li>
 <li><strong>Pb 的&quot;无 Koa&quot;是对的，但说法错了。</strong> 它缺的不是&quot;没查到 log Koa&quot;，而是&quot;log Koa 这个参数类别对 Pb 不存在&quot;。学生照着&quot;先补参数&quot;去做，会去查 Pb 的 $K_{oa}$，查不到，然后编一个——这正是第 14 章&quot;结构性失效&quot;最纯粹的形态：<strong>把一个不存在的参数当成一个缺失的参数。</strong></li>
 </ul>
 <p>所以判据要补两格。补完之后是六格：</p>
@@ -5870,7 +5870,7 @@ knitr::kable(rbind(
 <td align="right">NA</td>
 <td align="right">NA</td>
 <td align="left">框架外·形态耦合</td>
-<td align="left">多物种 + 反应网络</td>
+<td align="left">多形态 + 反应网络</td>
 </tr>
 <tr>
 <td align="left">Hg(II)</td>
@@ -5878,7 +5878,7 @@ knitr::kable(rbind(
 <td align="right">NA</td>
 <td align="right">NA</td>
 <td align="left">框架外·形态耦合</td>
-<td align="left">多物种 + 反应网络</td>
+<td align="left">多形态 + 反应网络</td>
 </tr>
 <tr>
 <td align="left">Pb</td>
@@ -5909,7 +5909,7 @@ knitr::kable(rbind(
 <tr>
 <td>框架外·形态耦合</td>
 <td>有 $H$，但形态间转化由动力学控制</td>
-<td>多物种 + 反应网络</td>
+<td>多形态 + 反应网络</td>
 <td>Hg、Cr、As</td>
 </tr>
 <tr>
@@ -5939,8 +5939,8 @@ knitr::kable(rbind(
 </tbody>
 </table>
 <p><strong>这两格的区别值得单独记一句：颗粒态是&quot;没有相可分配&quot;，形态耦合是&quot;有相但相里的东西在变&quot;。</strong> 前者换坐标，后者加方程。搞混了，要么给 Pb 编一个 $K_{oa}$，要么给 Hg 算一个&quot;平均汞&quot;。</p>
-<h2>23.3 路线 A：Hg 的三物种耦合</h2>
-<h3>23.3.1 三个物种，三套参数</h3>
+<h2>23.3 路线 A：Hg 的三形态耦合</h2>
+<h3>23.3.1 三个形态，三套参数</h3>
 <p>汞在环境中有三个必须分开的形态。它们的物化性质差得比 PCB 和 PFOA 之间还远：</p>
 <pre><code class="language-r">hg_tab &lt;- data.frame(
   形态 = c(&quot;Hg(0) 元素汞&quot;, &quot;Hg(II) 反应性汞&quot;, &quot;MeHg 甲基汞&quot;),
@@ -5991,21 +5991,21 @@ knitr::kable(hg_tab, row.names = FALSE, check.names = FALSE,
 </tr>
 </tbody>
 </table>
-<p>三行读下来，一个结论：<strong>没有哪个单物种模型能同时给出三件事。</strong></p>
+<p>三行读下来，一个结论：<strong>没有哪个单形态模型能同时给出三件事。</strong></p>
 <ul>
 <li>全球<strong>分布</strong>由 Hg(0) 决定——只有它活得够久，能跨半球；</li>
 <li><strong>沉降</strong>由 Hg(II) 决定——它一周内一定下来，落到哪就是哪；</li>
 <li><strong>生物累积</strong>由 MeHg 决定——前两个都不进食物链。</li>
 </ul>
-<p>这就是&quot;一个元素三个物种&quot;的物理依据，也是 <code>classify_chem()</code> 把它判成&quot;框架外·形态耦合&quot;的原因。</p>
+<p>这就是&quot;一个元素三个形态&quot;的物理依据，也是 <code>classify_chem()</code> 把它判成&quot;框架外·形态耦合&quot;的原因。</p>
 <h3>23.3.2 一个必须解决的坐标问题</h3>
-<p>三个物种各建一个 <code>build_model()</code>，块对角拼起来：</p>
+<p>三个形态各建一个 <code>build_model()</code>，块对角拼起来：</p>
 <pre><code class="language-r">hg_b  &lt;- hg_bands()             # 10 个纬度带 × 7 相
-hg_m  &lt;- hg_model(hg_b)         # 3 物种块对角 + 4 条反应边
+hg_m  &lt;- hg_model(hg_b)         # 3 形态块对角 + 4 条反应边
 hg_em &lt;- hg_emission(hg_b)      # 6000 t/yr，按纬度分配，70% 排为 Hg(0)
-cat(&quot;状态数:&quot;, hg_m$N, &quot;= 10 带 × 7 相 × 3 物种\n&quot;)
+cat(&quot;状态数:&quot;, hg_m$N, &quot;= 10 带 × 7 相 × 3 形态\n&quot;)
 </code></pre>
-<pre><code>状态数: 210 = 10 带 × 7 相 × 3 物种
+<pre><code>状态数: 210 = 10 带 × 7 相 × 3 形态
 </code></pre>
 <p>本章把四个量明确标成<strong>联合校准参数集</strong>，而不是四个互相独立的实测常数：有效大气深度 5000 m、Hg(0) 基准氧化 1.5 /yr、Hg(II) 净光还原 0.02 /yr，以及 Hg(II) 土壤永久固定 0.005 /yr。它们用大气总汞库存和 Hg(0) 寿命作校准约束；下文的 AMDE 年均、南北半球比、Hg(II) 与 MeHg 浓度保留为独立检验。这样可以防止用同一批指标既调参又宣称验证成功。</p>
 <p>特别说明：旧版光还原率 0.8 /yr 是在悬浮颗粒沉降通量漏乘 <code>vfspm</code> 时得到的补偿值。修正该物理错误后，继续沿用 0.8 /yr 会造成水—气间过度循环；因此本章重新校准，并保留未通过的结构性验证结果。</p>
@@ -6087,7 +6087,7 @@ knitr::kable(cmp2, row.names = FALSE, check.names = FALSE,
 <p><strong>一句判据</strong>：模型跑完，先看未知量的取值范围。跨了 12 个量级以上，换坐标；换完再跑一遍，看结果差多少。差了几倍，说明原来那版是噪声。</p>
 </blockquote>
 <h3>23.3.3 四条反应边</h3>
-<p>三个物种各有一套 $Z$ 和 $D$，但它们之间还有转化。这四条边不在逸度框架的任何一格子里：</p>
+<p>三个形态各有一套 $Z$ 和 $D$，但它们之间还有转化。这四条边不在逸度框架的任何一格子里：</p>
 <table>
 <thead>
 <tr>
@@ -6114,7 +6114,7 @@ knitr::kable(cmp2, row.names = FALSE, check.names = FALSE,
 <td>Hg(II) → MeHg（甲基化）</td>
 <td>沉积物 0.02 /yr</td>
 <td>硫酸盐还原菌活性</td>
-<td><strong>跨相 + 跨物种</strong></td>
+<td><strong>跨相 + 跨形态</strong></td>
 </tr>
 <tr>
 <td>MeHg → Hg(II)（去甲基化）</td>
@@ -6152,7 +6152,7 @@ cat(&quot;氧化边在 B 中的 2×2 子块（band 1）:\n&quot;)
 <pre><code>不改骨架，只往矩阵里加边。
 </code></pre>
 <p><strong>注意一个细节</strong>：光还原使用同一个基准速率，但拆成大气权重 0.2 与表层水纬度权重 0.1–0.6，而不是把一个总百分比硬分给两相。这不是随手分的，是模型的生死线——23.3.6 节会看到，如果删掉水相那一条，北极大气 Hg(0) 的年均浓度会再降低约四成。这里的 0.02 /yr 是纬度带箱体的净回流参数；旧版 0.8 /yr 曾补偿漏乘悬浮颗粒体积分数造成的过强沉降，修正沉降通量后已不能继续使用。</p>
-<h3>23.3.4 结果：三个物种管三件事</h3>
+<h3>23.3.4 结果：三个形态管三件事</h3>
 <pre><code class="language-r">hg_C0 &lt;- hg_steady(hg_m, hg_em$E(hg_m))
 lat &lt;- hg_b$lat
 hg_out &lt;- data.frame(
@@ -6161,9 +6161,9 @@ hg_out &lt;- data.frame(
   `Hg(II) 大气 [pg/m³]` = round(hg_ng_air(hg_air_tot(hg_C0, &quot;HgII&quot;)) * 1e3, 0),
   `MeHg 表层水 [pg/L]` = round(hg_ng_l(hg_lat(hg_C0, &quot;MeHg&quot;, &quot;water&quot;)) * 1e3, 1), check.names = FALSE)
 knitr::kable(hg_out, row.names = FALSE, check.names = FALSE,
-             caption = &quot;三物种稳态浓度：Hg(0) 管分布，Hg(II) 管沉降，MeHg 管累积&quot;)
+             caption = &quot;三形态稳态浓度：Hg(0) 管分布，Hg(II) 管沉降，MeHg 管累积&quot;)
 </code></pre>
-<p>Table: 三物种稳态浓度：Hg(0) 管分布，Hg(II) 管沉降，MeHg 管累积</p>
+<p>Table: 三形态稳态浓度：Hg(0) 管分布，Hg(II) 管沉降，MeHg 管累积</p>
 <table>
 <thead>
 <tr>
@@ -6376,7 +6376,7 @@ ggplot(dl, aes(month, Hg0, colour = 带)) +
 <p><strong>思考题 17</strong>：把 <code>hg_oxid_rate()</code> 的 <code>amde_gain</code> 从 16 改到 40，重跑。谷值降到多少？年均降到多少？再把 <code>polar</code> 的门槛从 55° 改到 40°，看 45°N 那条带是否也出现耗竭。真实观测里，45°N 有 AMDE 吗？如果没有，说明什么？</p>
 </blockquote>
 <h3>23.3.6 一条边漏了会怎样</h3>
-<p>这一节是全章最重要的一节，因为它演示了多物种模型最典型的失败方式。</p>
+<p>这一节是全章最重要的一节，因为它演示了多形态模型最典型的失败方式。</p>
 <p>假设你写完 23.3.3 的四条边，觉得&quot;光还原不就是把 Hg(II) 变回 Hg(0) 吗，写在大气相就够了&quot;。改一行代码，重跑：</p>
 <pre><code class="language-r">## 只写大气光还原的版本：把水相那一条去掉
 hg_m2 &lt;- hg_m
@@ -6403,10 +6403,10 @@ cat(sprintf(&quot;完整版   北极年均 %.2f，谷 %.2f\n&quot;, mean(hg_ar),
 </code></pre>
 <pre><code>差 1.7 倍
 </code></pre>
-<p><strong>本次运行中，删边后北极年均从 0.86 降到 0.52 ng/m³，相差 1.7 倍。</strong> 注意这不是说稳态完全不变：删边会改变物种间与介质间的稳态分配；这里更关键的诊断是，北极季节恢复明显变弱，说明水相回流是动态恢复机制的一部分。旧版正文把它写成&quot;稳态全都没变&quot;过于绝对，现已改为由实际删边实验判断。</p>
-<p>这正是多物种模型的陷阱：<strong>每条边的量级看起来都合理，但漏一条的效果不是&quot;少一点&quot;，而是&quot;换了一个机制&quot;。</strong> 真实世界里 AMDE 沉下去的 Hg 富集在雪面和表层海水，夏季光照把它还原成 Hg(0) 挥发回大气——这是北极大气汞恢复的主通路。只写大气还原，等于假设&quot;沉下去的就再也不上来了&quot;，模型会给出一个&quot;每年春季清空、全年低位&quot;的曲线，看起来像 AMDE，其实是另一个东西。</p>
+<p><strong>本次运行中，删边后北极年均从 0.86 降到 0.52 ng/m³，相差 1.7 倍。</strong> 注意这不是说稳态完全不变：删边会改变形态间与介质间的稳态分配；这里更关键的诊断是，北极季节恢复明显变弱，说明水相回流是动态恢复机制的一部分。旧版正文把它写成&quot;稳态全都没变&quot;过于绝对，现已改为由实际删边实验判断。</p>
+<p>这正是多形态模型的陷阱：<strong>每条边的量级看起来都合理，但漏一条的效果不是&quot;少一点&quot;，而是&quot;换了一个机制&quot;。</strong> 真实世界里 AMDE 沉下去的 Hg 富集在雪面和表层海水，夏季光照把它还原成 Hg(0) 挥发回大气——这是北极大气汞恢复的主通路。只写大气还原，等于假设&quot;沉下去的就再也不上来了&quot;，模型会给出一个&quot;每年春季清空、全年低位&quot;的曲线，看起来像 AMDE，其实是另一个东西。</p>
 <blockquote>
-<p><strong>一句判据</strong>：多物种模型做完，逐条边做一次&quot;删边实验&quot;。如果删掉某条边后<strong>只有动态结果变、稳态结果不变</strong>，那条边就是季节性机制；如果<strong>稳态也变</strong>，它就是质量平衡的主通路。两种边都必须有独立观测支撑，不能靠&quot;看起来合理&quot;。</p>
+<p><strong>一句判据</strong>：多形态模型做完，逐条边做一次&quot;删边实验&quot;。如果删掉某条边后<strong>只有动态结果变、稳态结果不变</strong>，那条边就是季节性机制；如果<strong>稳态也变</strong>，它就是质量平衡的主通路。两种边都必须有独立观测支撑，不能靠&quot;看起来合理&quot;。</p>
 </blockquote>
 <h2>23.4 路线 B：Pb —— 换状态变量</h2>
 <h3>23.4.1 连 $H$ 都没有</h3>
@@ -6533,7 +6533,7 @@ ggplot(pl, aes(d, L, colour = 情景)) +
 <pre><code class="language-r">cmp &lt;- data.frame(
   类别 = c(&quot;PCB-153&quot;, &quot;BDE-209&quot;, &quot;PFOA&quot;, &quot;微塑料&quot;, &quot;Hg&quot;, &quot;Pb&quot;),
   状态变量 = c(&quot;f（逸度）&quot;, &quot;f&quot;, &quot;f₀ + 酸碱平衡容量&quot;, &quot;M（粒径谱）&quot;,
-               &quot;M × 3 物种&quot;, &quot;M（粒径箱）&quot;),
+               &quot;M × 3 形态&quot;, &quot;M（粒径箱）&quot;),
   主输运介质 = c(&quot;大气 + 海洋&quot;, &quot;大气（短）&quot;, &quot;海洋&quot;, &quot;海洋 + 大气&quot;,
                  &quot;大气（Hg0）&quot;, &quot;大气颗粒&quot;),
   主控参数 = c(&quot;log Koa&quot;, &quot;log Koa（无定值）&quot;, &quot;pKa + Kiw&quot;, &quot;粒径 + ρ_eff&quot;,
@@ -6592,7 +6592,7 @@ knitr::kable(cmp, row.names = FALSE, check.names = FALSE,
 </tr>
 <tr>
 <td align="left">Hg</td>
-<td align="left">M × 3 物种</td>
+<td align="left">M × 3 形态</td>
 <td align="left">大气（Hg0）</td>
 <td align="left">k_ox + k_red</td>
 <td align="left">仅埋藏</td>
@@ -6620,13 +6620,13 @@ knitr::kable(cmp, row.names = FALSE, check.names = FALSE,
 <blockquote>
 <p><strong>&quot;这个物质适不适用逸度框架&quot;这个问题问错了。正确的问法是：&quot;它有没有一个可定义逸度的自由分子相？&quot;</strong></p>
 <p>有，且形态间瞬时平衡 → 框架内，调参数（PCB、BDE、PFOA）。
-有，但形态间由动力学控制 → <strong>换反应网络</strong>（Hg：三物种 + 四条边 + 质量坐标）。
+有，但形态间由动力学控制 → <strong>换反应网络</strong>（Hg：三形态 + 四条边 + 质量坐标）。
 没有 → <strong>换状态变量</strong>（Pb、微塑料：粒径谱 + 沉降速度）。</p>
 <p>两种改造都不动骨架：仍然是 $A M = E$，仍然是对角出流、非对角负入流。<strong>换的是&quot;什么当未知量&quot;和&quot;矩阵里有哪些边&quot;，不是求解器。</strong></p>
 </blockquote>
 <p>最后一句留给 AMDE 那节：</p>
 <blockquote>
-<p><strong>多物种模型的可信度，不取决于参数查得多全，取决于每条边都能说出它为什么在、删掉它会怎样。</strong> 23.3.6 里删掉水相回流边，北极年均相差约 1.7 倍，季节恢复明显变弱；与此同时稳态分配也会改变。危险之处不是“稳态完全不变”，而是只看总量或少数稳态指标时，动态机制错误可能仍被掩盖。</p>
+<p><strong>多形态模型的可信度，不取决于参数查得多全，取决于每条边都能说出它为什么在、删掉它会怎样。</strong> 23.3.6 里删掉水相回流边，北极年均相差约 1.7 倍，季节恢复明显变弱；与此同时稳态分配也会改变。危险之处不是“稳态完全不变”，而是只看总量或少数稳态指标时，动态机制错误可能仍被掩盖。</p>
 </blockquote>
 <h1>第 24 章：前体—产物网络：母体消失不等于污染消失</h1>
 <p><strong>一句话：</strong> 单物质降解项把质量从系统中删掉；反应网络则必须说明它变成了什么，以及元素质量是否守恒。</p>
@@ -7058,7 +7058,7 @@ knitr::kable(data.frame(
 <p><strong>垂向参数化对比</strong>：实现&quot;随颗粒沉降移除&quot;的版本（思考题 11），与涡扩散版本对比100年时的表层/深层浓度剖面，并用时间步长收敛检验确认差异不是数值误差。</p>
 </li>
 <li>
-<p><strong>完整多物种改造</strong>：当前内核用“中性态逸度 + 酸碱平衡总容量”，适用于瞬时平衡。进一步把中性态和阴离子拆成两个独立状态，并加入有限速率质子化/去质子化，比较它与平衡近似在快速pH变化情景下的差异。</p>
+<p><strong>完整多形态改造</strong>：当前内核用“中性态逸度 + 酸碱平衡总容量”，适用于瞬时平衡。进一步把中性态和阴离子拆成两个独立状态，并加入有限速率质子化/去质子化，比较它与平衡近似在快速pH变化情景下的差异。</p>
 </li>
 <li>
 <p><strong>参数失效 vs 结构失效</strong>：跑第 9 章的 <code>chem_bde(&quot;BDE209&quot;, logKow = 6.5)</code> 与 <code>logKow = 13.6</code>，记录北极空气浓度；再跑 <code>chem_pfoa(pKa = 3.8)</code> 与 <code>pKa = 0.3</code>，记录表层水浓度与挥发通量。哪一个是&quot;换参数答案就变&quot;？哪一个是&quot;换参数对某个输出量完全没用&quot;？据此写出区分两类失效的可操作判据。</p>
